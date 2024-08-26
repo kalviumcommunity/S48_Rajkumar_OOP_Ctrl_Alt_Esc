@@ -20,13 +20,13 @@ private:
     string correctAnswer;
 public:
     void generatePuzzle() override {
-        riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
-        correctAnswer = "Echo";
-        cout << "Puzzle: " << riddle << endl;
+        this->riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
+        this->correctAnswer = "Echo";
+        cout << "Puzzle: " << this->riddle << endl;
     }
 
     bool checkAnswer(string answer) override {
-        return answer == correctAnswer;
+        return answer == this->correctAnswer;
     }
 
     void provideHint() override {
@@ -41,13 +41,13 @@ private:
     string correctAnswer;
 public:
     void generatePuzzle() override {
-        sequence = "2, 4, 8, 16, ?";
-        correctAnswer = "32";
-        cout << "Puzzle: " << sequence << endl;
+        this->sequence = "2, 4, 8, 16, ?";
+        this->correctAnswer = "32";
+        cout << "Puzzle: " << this->sequence << endl;
     }
 
     bool checkAnswer(string answer) override {
-        return answer == correctAnswer;
+        return answer == this->correctAnswer;
     }
 
     void provideHint() override {
@@ -71,31 +71,31 @@ public:
         : roomName(move(other.roomName)), puzzle(move(other.puzzle)), isSolved(other.isSolved) {}
 
     void enterRoom() {
-        cout << "You have entered the " << roomName << "." << endl;
+        cout << "You have entered the " << this->roomName << "." << endl;
     }
 
     void startPuzzle() {
-        if (!isSolved) {
-            puzzle->generatePuzzle();
+        if (!this->isSolved) {
+            this->puzzle->generatePuzzle();
         }
     }
 
     bool checkSolution(string answer) {
-        if (!isSolved && puzzle->checkAnswer(answer)) {
-            isSolved = true;
+        if (!this->isSolved && this->puzzle->checkAnswer(answer)) {
+            this->isSolved = true;
             return true;
         }
         return false;
     }
 
     void provideHint() {
-        if (!isSolved) {
-            puzzle->provideHint();
+        if (!this->isSolved) {
+            this->puzzle->provideHint();
         }
     }
 
     bool isRoomSolved() const {
-        return isSolved;
+        return this->isSolved;
     }
 };
 
@@ -109,20 +109,20 @@ private:
 public:
     Player(string name) : playerName(name), attempts(0), hintsUsed(0) {}
 
-    string getName() {
-        return playerName;
+    string getName() const {
+        return this->playerName;
     }
 
-    void trackProgress() {
-        cout << playerName << " has made " << attempts << " attempts and used " << hintsUsed << " hints." << endl;
+    void trackProgress() const {
+        cout << this->playerName << " has made " << this->attempts << " attempts and used " << this->hintsUsed << " hints." << endl;
     }
 
     void updateAttempts() {
-        attempts++;
+        this->attempts++;
     }
 
     void useHint() {
-        hintsUsed++;
+        this->hintsUsed++;
     }
 };
 
@@ -136,13 +136,13 @@ public:
     GameEngine(Player* p) : player(p) {}
 
     void addRoom(Room&& room) {
-        rooms.push_back(move(room));
+        this->rooms.push_back(move(room));
     }
 
     void startGame() {
-        cout << "Welcome, " << player->getName() << "! The game begins now!" << endl;
+        cout << "Welcome, " << this->player->getName() << "! The game begins now!" << endl;
 
-        for (Room& currentRoom : rooms) {
+        for (Room& currentRoom : this->rooms) {
             if (currentRoom.isRoomSolved()) {
                 continue;
             }
@@ -154,7 +154,7 @@ public:
             cout << "Enter your answer: ";
             getline(cin, playerAnswer);
 
-            player->updateAttempts();
+            this->player->updateAttempts();
             if (currentRoom.checkSolution(playerAnswer)) {
                 cout << "Correct! You have solved the puzzle!" << endl;
                 break; // Stop the game immediately after the correct answer is given
@@ -164,11 +164,11 @@ public:
                 getline(cin, needHint);
                 if (needHint == "y" || needHint == "Y") {
                     currentRoom.provideHint();
-                    player->useHint();
+                    this->player->useHint();
                 }
             }
 
-            player->trackProgress();
+            this->player->trackProgress();
         }
 
         cout << "Game over! Thanks for playing!" << endl;

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <memory>
 using namespace std;
 
@@ -130,19 +129,26 @@ public:
 class GameEngine {
 private:
     Player* player;
-    vector<Room> rooms;
+    static const int MAX_ROOMS = 10; // Maximum number of rooms
+    unique_ptr<Room> rooms[MAX_ROOMS];
+    int roomCount;
 
 public:
-    GameEngine(Player* p) : player(p) {}
+    GameEngine(Player* p) : player(p), roomCount(0) {}
 
-    void addRoom(Room&& room) {
-        this->rooms.push_back(move(room));
+    void addRoom(unique_ptr<Room> room) {
+        if (roomCount < MAX_ROOMS) {
+            rooms[roomCount++] = move(room);
+        } else {
+            cout << "Cannot add more rooms, maximum capacity reached." << endl;
+        }
     }
 
     void startGame() {
         cout << "Welcome, " << this->player->getName() << "! The game begins now!" << endl;
 
-        for (Room& currentRoom : this->rooms) {
+        for (int i = 0; i < roomCount; ++i) {
+            Room& currentRoom = *rooms[i];
             if (currentRoom.isRoomSolved()) {
                 continue;
             }
@@ -183,12 +189,10 @@ int main() {
 
     Player player(playerName);
 
-    Room room1("Mystery Room", make_unique<RiddlePuzzle>());
-    Room room2("Logic Room", make_unique<NumberSequencePuzzle>());
-
     GameEngine game(&player);
-    game.addRoom(move(room1));
-    game.addRoom(move(room2));
+
+    game.addRoom(make_unique<Room>("Mystery Room", make_unique<RiddlePuzzle>()));
+    game.addRoom(make_unique<Room>("Logic Room", make_unique<NumberSequencePuzzle>()));
 
     game.startGame();
 

@@ -3,29 +3,27 @@
 #include <memory>
 using namespace std;
 
-// Base Puzzle Class (Abstract Class)
+// Base Puzzle Class
 class Puzzle {
 public:
     virtual void generatePuzzle() = 0;
-    virtual bool checkAnswer(string answer) = 0;
+    virtual bool checkAnswer(const string& answer) = 0;
     virtual void provideHint() = 0;
     virtual ~Puzzle() {}
 };
 
-// Derived Class for Riddle Puzzle
+// Riddle Puzzle Class
 class RiddlePuzzle : public Puzzle {
 private:
-    string riddle;
-    string correctAnswer;
+    string riddle = "I speak without a mouth and hear without ears. What am I?";
+    string correctAnswer = "Echo";
 public:
     void generatePuzzle() override {
-        this->riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
-        this->correctAnswer = "Echo";
-        cout << "Puzzle: " << this->riddle << endl;
+        cout << "Puzzle: " << riddle << endl;
     }
 
-    bool checkAnswer(string answer) override {
-        return answer == this->correctAnswer;
+    bool checkAnswer(const string& answer) override {
+        return answer == correctAnswer;
     }
 
     void provideHint() override {
@@ -33,20 +31,18 @@ public:
     }
 };
 
-// Derived Class for Number Sequence Puzzle
+// Number Sequence Puzzle Class
 class NumberSequencePuzzle : public Puzzle {
 private:
-    string sequence;
-    string correctAnswer;
+    string sequence = "2, 4, 8, 16, ?";
+    string correctAnswer = "32";
 public:
     void generatePuzzle() override {
-        this->sequence = "2, 4, 8, 16, ?";
-        this->correctAnswer = "32";
-        cout << "Puzzle: " << this->sequence << endl;
+        cout << "Puzzle: " << sequence << endl;
     }
 
-    bool checkAnswer(string answer) override {
-        return answer == this->correctAnswer;
+    bool checkAnswer(const string& answer) override {
+        return answer == correctAnswer;
     }
 
     void provideHint() override {
@@ -59,42 +55,37 @@ class Room {
 private:
     string roomName;
     unique_ptr<Puzzle> puzzle;
-    bool isSolved;  // Flag to check if the puzzle has been solved
+    bool isSolved = false;
 
 public:
-    Room(string name, unique_ptr<Puzzle> p) : roomName(name), puzzle(move(p)), isSolved(false) {}
-
-    Room(const Room&) = delete;
-
-    Room(Room&& other) noexcept
-        : roomName(move(other.roomName)), puzzle(move(other.puzzle)), isSolved(other.isSolved) {}
+    Room(string name, unique_ptr<Puzzle> p) : roomName(name), puzzle(move(p)) {}
 
     void enterRoom() {
-        cout << "You have entered the " << this->roomName << "." << endl;
+        cout << "You have entered the " << roomName << "." << endl;
     }
 
     void startPuzzle() {
-        if (!this->isSolved) {
-            this->puzzle->generatePuzzle();
+        if (!isSolved) {
+            puzzle->generatePuzzle();
         }
     }
 
-    bool checkSolution(string answer) {
-        if (!this->isSolved && this->puzzle->checkAnswer(answer)) {
-            this->isSolved = true;
+    bool checkSolution(const string& answer) {
+        if (!isSolved && puzzle->checkAnswer(answer)) {
+            isSolved = true;
             return true;
         }
         return false;
     }
 
     void provideHint() {
-        if (!this->isSolved) {
-            this->puzzle->provideHint();
+        if (!isSolved) {
+            puzzle->provideHint();
         }
     }
 
     bool isRoomSolved() const {
-        return this->isSolved;
+        return isSolved;
     }
 };
 
@@ -102,26 +93,26 @@ public:
 class Player {
 private:
     string playerName;
-    int attempts;
-    int hintsUsed;
+    int attempts = 0;
+    int hintsUsed = 0;
 
 public:
-    Player(string name) : playerName(name), attempts(0), hintsUsed(0) {}
-
-    string getName() const {
-        return this->playerName;
-    }
+    Player(string name) : playerName(name) {}
 
     void trackProgress() const {
-        cout << this->playerName << " has made " << this->attempts << " attempts and used " << this->hintsUsed << " hints." << endl;
+        cout << playerName << " has made " << attempts << " attempts and used " << hintsUsed << " hints." << endl;
     }
 
     void updateAttempts() {
-        this->attempts++;
+        attempts++;
     }
 
     void useHint() {
-        this->hintsUsed++;
+        hintsUsed++;
+    }
+
+    string getName() const {
+        return playerName;
     }
 };
 
@@ -129,29 +120,26 @@ public:
 class GameEngine {
 private:
     Player* player;
-    static const int MAX_ROOMS = 10; // Maximum number of rooms
-    unique_ptr<Room> rooms[MAX_ROOMS];
-    int roomCount;
+    unique_ptr<Room> rooms[10];
+    int roomCount = 0;
 
 public:
-    GameEngine(Player* p) : player(p), roomCount(0) {}
+    GameEngine(Player* p) : player(p) {}
 
     void addRoom(unique_ptr<Room> room) {
-        if (roomCount < MAX_ROOMS) {
+        if (roomCount < 10) {
             rooms[roomCount++] = move(room);
         } else {
-            cout << "Cannot add more rooms, maximum capacity reached." << endl;
+            cout << "Cannot add more rooms." << endl;
         }
     }
 
     void startGame() {
-        cout << "Welcome, " << this->player->getName() << "! The game begins now!" << endl;
+        cout << "Welcome, " << player->getName() << "! The game begins now!" << endl;
 
         for (int i = 0; i < roomCount; ++i) {
             Room& currentRoom = *rooms[i];
-            if (currentRoom.isRoomSolved()) {
-                continue;
-            }
+            if (currentRoom.isRoomSolved()) continue;
 
             currentRoom.enterRoom();
             currentRoom.startPuzzle();
@@ -159,22 +147,22 @@ public:
             string playerAnswer;
             cout << "Enter your answer: ";
             getline(cin, playerAnswer);
+            player->updateAttempts();
 
-            this->player->updateAttempts();
             if (currentRoom.checkSolution(playerAnswer)) {
                 cout << "Correct! You have solved the puzzle!" << endl;
-                break; // Stop the game immediately after the correct answer is given
+                continue; // Move to the next room
             } else {
                 cout << "Incorrect! Do you need a hint? (y/n): ";
                 string needHint;
                 getline(cin, needHint);
                 if (needHint == "y" || needHint == "Y") {
                     currentRoom.provideHint();
-                    this->player->useHint();
+                    player->useHint();
                 }
             }
 
-            this->player->trackProgress();
+            player->trackProgress();
         }
 
         cout << "Game over! Thanks for playing!" << endl;
@@ -188,7 +176,6 @@ int main() {
     getline(cin, playerName);
 
     Player player(playerName);
-
     GameEngine game(&player);
 
     game.addRoom(make_unique<Room>("Mystery Room", make_unique<RiddlePuzzle>()));

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <memory>
 using namespace std;
 
 // Base Puzzle Class
@@ -15,11 +14,13 @@ public:
 // Riddle Puzzle Class
 class RiddlePuzzle : public Puzzle {
 private:
-    string riddle = "I speak without a mouth and hear without ears. What am I?";
-    string correctAnswer = "Echo";
+    string riddle;
+    string correctAnswer;
 public:
     void generatePuzzle() override {
-        cout << "Puzzle: " << riddle << endl;
+        this->riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
+        this->correctAnswer = "Echo";
+        cout << "Puzzle: " << this->riddle << endl;
     }
 
     bool checkAnswer(const string& answer) override {
@@ -34,11 +35,13 @@ public:
 // Number Sequence Puzzle Class
 class NumberSequencePuzzle : public Puzzle {
 private:
-    string sequence = "2, 4, 8, 16, ?";
-    string correctAnswer = "32";
+    string sequence;
+    string correctAnswer;
 public:
     void generatePuzzle() override {
-        cout << "Puzzle: " << sequence << endl;
+        this->sequence = "2, 4, 8, 16, ?";
+        this->correctAnswer = "32";
+        cout << "Puzzle: " << this->sequence << endl;
     }
 
     bool checkAnswer(const string& answer) override {
@@ -54,11 +57,11 @@ public:
 class Room {
 private:
     string roomName;
-    unique_ptr<Puzzle> puzzle;
+    Puzzle* puzzle;  // Use raw pointer for polymorphism
     bool isSolved = false;
 
 public:
-    Room(string name, unique_ptr<Puzzle> p) : roomName(name), puzzle(move(p)) {}
+    Room(string name, Puzzle* p) : roomName(name), puzzle(p) {}
 
     void enterRoom() {
         cout << "You have entered the " << roomName << "." << endl;
@@ -86,6 +89,11 @@ public:
 
     bool isRoomSolved() const {
         return isSolved;
+    }
+
+    // Destructor to clean up the puzzle object
+    ~Room() {
+        delete puzzle;
     }
 };
 
@@ -120,15 +128,15 @@ public:
 class GameEngine {
 private:
     Player* player;
-    unique_ptr<Room> rooms[10];
+    Room* rooms[10];  // Array of raw pointers to rooms
     int roomCount = 0;
 
 public:
     GameEngine(Player* p) : player(p) {}
 
-    void addRoom(unique_ptr<Room> room) {
+    void addRoom(Room* room) {
         if (roomCount < 10) {
-            rooms[roomCount++] = move(room);
+            rooms[roomCount++] = room;
         } else {
             cout << "Cannot add more rooms." << endl;
         }
@@ -167,6 +175,13 @@ public:
 
         cout << "Game over! Thanks for playing!" << endl;
     }
+
+    // Destructor to clean up the rooms
+    ~GameEngine() {
+        for (int i = 0; i < roomCount; ++i) {
+            delete rooms[i];
+        }
+    }
 };
 
 // Main Function
@@ -178,8 +193,8 @@ int main() {
     Player player(playerName);
     GameEngine game(&player);
 
-    game.addRoom(make_unique<Room>("Mystery Room", make_unique<RiddlePuzzle>()));
-    game.addRoom(make_unique<Room>("Logic Room", make_unique<NumberSequencePuzzle>()));
+    game.addRoom(new Room("Mystery Room", new RiddlePuzzle()));
+    game.addRoom(new Room("Logic Room", new NumberSequencePuzzle()));
 
     game.startGame();
 

@@ -1,1 +1,1 @@
-class Puzzle
+: roomName(name), puzzle(move(p)) 

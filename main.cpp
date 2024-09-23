@@ -57,7 +57,7 @@ public:
 class Room {
 private:
     string roomName;
-    Puzzle* puzzle;  // Use raw pointer for polymorphism
+    Puzzle* puzzle; 
     bool isSolved = false;
 
 public:
@@ -91,7 +91,6 @@ public:
         return isSolved;
     }
 
-    // Destructor to clean up the puzzle object
     ~Room() {
         delete puzzle;
     }
@@ -128,14 +127,17 @@ public:
 class GameEngine {
 private:
     Player* player;
-    Room* rooms[10];  // Array of raw pointers to rooms
+    Room** rooms; 
     int roomCount = 0;
+    int maxRooms;
 
 public:
-    GameEngine(Player* p) : player(p) {}
+    GameEngine(Player* p, int maxRooms) : player(p), maxRooms(maxRooms) {
+        rooms = new Room*[maxRooms];
+    }
 
     void addRoom(Room* room) {
-        if (roomCount < 10) {
+        if (roomCount < maxRooms) {
             rooms[roomCount++] = room;
         } else {
             cout << "Cannot add more rooms." << endl;
@@ -146,26 +148,26 @@ public:
         cout << "Welcome, " << player->getName() << "! The game begins now!" << endl;
 
         for (int i = 0; i < roomCount; ++i) {
-            Room& currentRoom = *rooms[i];
-            if (currentRoom.isRoomSolved()) continue;
+            Room* currentRoom = rooms[i];
+            if (currentRoom->isRoomSolved()) continue;
 
-            currentRoom.enterRoom();
-            currentRoom.startPuzzle();
+            currentRoom->enterRoom();
+            currentRoom->startPuzzle();
 
             string playerAnswer;
             cout << "Enter your answer: ";
             getline(cin, playerAnswer);
             player->updateAttempts();
 
-            if (currentRoom.checkSolution(playerAnswer)) {
+            if (currentRoom->checkSolution(playerAnswer)) {
                 cout << "Correct! You have solved the puzzle!" << endl;
-                continue; // Move to the next room
+                continue; 
             } else {
                 cout << "Incorrect! Do you need a hint? (y/n): ";
                 string needHint;
                 getline(cin, needHint);
                 if (needHint == "y" || needHint == "Y") {
-                    currentRoom.provideHint();
+                    currentRoom->provideHint();
                     player->useHint();
                 }
             }
@@ -176,11 +178,11 @@ public:
         cout << "Game over! Thanks for playing!" << endl;
     }
 
-    // Destructor to clean up the rooms
     ~GameEngine() {
         for (int i = 0; i < roomCount; ++i) {
-            delete rooms[i];
+            delete rooms[i];  
         }
+        delete[] rooms;  
     }
 };
 
@@ -190,13 +192,17 @@ int main() {
     cout << "Enter player name: ";
     getline(cin, playerName);
 
-    Player player(playerName);
-    GameEngine game(&player);
+    Player* player = new Player(playerName);
 
-    game.addRoom(new Room("Mystery Room", new RiddlePuzzle()));
-    game.addRoom(new Room("Logic Room", new NumberSequencePuzzle()));
+    GameEngine* game = new GameEngine(player, 10);
 
-    game.startGame();
+    game->addRoom(new Room("Mystery Room", new RiddlePuzzle()));
+    game->addRoom(new Room("Logic Room", new NumberSequencePuzzle()));
+
+    game->startGame();
+
+    delete game;  
+    delete player; 
 
     return 0;
 }

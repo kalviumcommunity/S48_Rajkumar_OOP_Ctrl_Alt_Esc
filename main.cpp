@@ -112,9 +112,13 @@ private:
     string playerName;
     int attempts = 0;
     static int totalHintsUsed;  // Static variable to track hints used across all players
+    static int totalPlayers;    // Static variable to track total number of players
+    static int totalAttempts;   // Static variable to track total attempts across all players
 
 public:
-    Player(string name) : playerName(name) {}
+    Player(string name) : playerName(name) {
+        totalPlayers++;  // Increment total players whenever a new player is created
+    }
 
     void trackProgress() const {
         cout << playerName << " has made " << attempts << " attempts and used " << totalHintsUsed << " hints." << endl;
@@ -122,6 +126,7 @@ public:
 
     void updateAttempts() {
         attempts++;
+        totalAttempts++;  // Increment total attempts
     }
 
     void useHint() {
@@ -135,10 +140,20 @@ public:
     static int getTotalHintsUsed() {  // Static function to access the static variable
         return totalHintsUsed;
     }
+
+    static int getTotalPlayers() {  // Static function to access total players
+        return totalPlayers;
+    }
+
+    static int getTotalAttempts() {  // Static function to access total attempts
+        return totalAttempts;
+    }
 };
 
-// Initialize static variable
+// Initialize static variables
 int Player::totalHintsUsed = 0;
+int Player::totalPlayers = 0;
+int Player::totalAttempts = 0;
 
 // Game Engine Class
 class GameEngine {
@@ -194,6 +209,8 @@ public:
 
         cout << "Game over! Thanks for playing!" << endl;
         cout << "Total rooms created: " << Room::getTotalRooms() << endl;  // Access static function
+        cout << "Total players: " << Player::getTotalPlayers() << endl;  // Access static function
+        cout << "Total attempts: " << Player::getTotalAttempts() << endl;  // Access static function
         cout << "Total hints used: " << Player::getTotalHintsUsed() << endl;  // Access static function
     }
 

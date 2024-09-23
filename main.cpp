@@ -59,9 +59,12 @@ private:
     string roomName;
     Puzzle* puzzle; 
     bool isSolved = false;
+    static int totalRooms;  // Static variable to track total rooms
 
 public:
-    Room(string name, Puzzle* p) : roomName(name), puzzle(p) {}
+    Room(string name, Puzzle* p) : roomName(name), puzzle(p) {
+        totalRooms++;  // Increment total rooms whenever a new room is created
+    }
 
     void enterRoom() {
         cout << "You have entered the " << roomName << "." << endl;
@@ -91,23 +94,30 @@ public:
         return isSolved;
     }
 
+    static int getTotalRooms() {  // Static function to access the static variable
+        return totalRooms;
+    }
+
     ~Room() {
         delete puzzle;
     }
 };
+
+// Initialize static variable
+int Room::totalRooms = 0;
 
 // Player Class
 class Player {
 private:
     string playerName;
     int attempts = 0;
-    int hintsUsed = 0;
+    static int totalHintsUsed;  // Static variable to track hints used across all players
 
 public:
     Player(string name) : playerName(name) {}
 
     void trackProgress() const {
-        cout << playerName << " has made " << attempts << " attempts and used " << hintsUsed << " hints." << endl;
+        cout << playerName << " has made " << attempts << " attempts and used " << totalHintsUsed << " hints." << endl;
     }
 
     void updateAttempts() {
@@ -115,13 +125,20 @@ public:
     }
 
     void useHint() {
-        hintsUsed++;
+        totalHintsUsed++;  // Increment static hints variable
     }
 
     string getName() const {
         return playerName;
     }
+
+    static int getTotalHintsUsed() {  // Static function to access the static variable
+        return totalHintsUsed;
+    }
 };
+
+// Initialize static variable
+int Player::totalHintsUsed = 0;
 
 // Game Engine Class
 class GameEngine {
@@ -176,6 +193,8 @@ public:
         }
 
         cout << "Game over! Thanks for playing!" << endl;
+        cout << "Total rooms created: " << Room::getTotalRooms() << endl;  // Access static function
+        cout << "Total hints used: " << Player::getTotalHintsUsed() << endl;  // Access static function
     }
 
     ~GameEngine() {

@@ -16,7 +16,9 @@ class RiddlePuzzle : public Puzzle {
 private:
     string riddle;
     string correctAnswer;
+
 public:
+    // Public methods to interact with private data
     void generatePuzzle() override {
         setRiddle("I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?");
         setCorrectAnswer("Echo");
@@ -54,7 +56,9 @@ class NumberSequencePuzzle : public Puzzle {
 private:
     string sequence;
     string correctAnswer;
+
 public:
+    // Public methods to interact with private data
     void generatePuzzle() override {
         setSequence("2, 4, 8, 16, ?");
         setCorrectAnswer("32");
@@ -91,8 +95,8 @@ public:
 class Room {
 private:
     string roomName;
-    Puzzle* puzzle; 
-    bool isSolved = false;
+    Puzzle* puzzle;
+    bool isSolved = false; // Private to control room's solved state
     static int totalRooms;  // Static variable to track total rooms
 
 public:
@@ -124,15 +128,7 @@ public:
         }
     }
 
-    bool isRoomSolved() const {
-        return isSolved;
-    }
-
-    static int getTotalRooms() {  // Static function to access the static variable
-        return totalRooms;
-    }
-
-    // Accessors and Mutators
+    // Accessor and Mutator methods for private members
     string getRoomName() const {
         return roomName;
     }
@@ -147,6 +143,10 @@ public:
 
     void setIsSolved(bool solved) {
         isSolved = solved;
+    }
+
+    static int getTotalRooms() {  // Static function to access the static variable
+        return totalRooms;
     }
 
     ~Room() {
@@ -171,20 +171,7 @@ public:
         totalPlayers++;  // Increment total players whenever a new player is created
     }
 
-    void trackProgress() const {
-        cout << getPlayerName() << " has made " << getAttempts() << " attempts and used " << totalHintsUsed << " hints." << endl;
-    }
-
-    void updateAttempts() {
-        attempts++;
-        totalAttempts++;  // Increment total attempts
-    }
-
-    void useHint() {
-        totalHintsUsed++;  // Increment static hints variable
-    }
-
-    // Accessors and Mutators
+    // Accessor and Mutator methods for private members
     string getPlayerName() const {
         return playerName;
     }
@@ -199,6 +186,19 @@ public:
 
     void setAttempts(int newAttempts) {
         attempts = newAttempts;
+    }
+
+    void updateAttempts() {
+        attempts++;
+        totalAttempts++;  // Increment total attempts
+    }
+
+    void useHint() {
+        totalHintsUsed++;  // Increment static hints variable
+    }
+
+    void trackProgress() const {
+        cout << getPlayerName() << " has made " << getAttempts() << " attempts and used " << totalHintsUsed << " hints." << endl;
     }
 
     static int getTotalHintsUsed() {  // Static function to access the static variable
@@ -245,7 +245,7 @@ public:
 
         for (int i = 0; i < roomCount; ++i) {
             Room* currentRoom = rooms[i];
-            if (currentRoom->isRoomSolved()) continue;
+            if (currentRoom->getIsSolved()) continue;
 
             currentRoom->enterRoom();
             currentRoom->startPuzzle();

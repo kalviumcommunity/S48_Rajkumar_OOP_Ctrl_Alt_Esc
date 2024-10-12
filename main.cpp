@@ -18,17 +18,34 @@ private:
     string correctAnswer;
 public:
     void generatePuzzle() override {
-        this->riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
-        this->correctAnswer = "Echo";
-        cout << "Puzzle: " << this->riddle << endl;
+        setRiddle("I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?");
+        setCorrectAnswer("Echo");
+        cout << "Puzzle: " << getRiddle() << endl;
     }
 
     bool checkAnswer(const string& answer) override {
-        return answer == correctAnswer;
+        return answer == getCorrectAnswer();
     }
 
     void provideHint() override {
         cout << "Hint: It repeats what you say." << endl;
+    }
+
+    // Accessors and Mutators
+    string getRiddle() const {
+        return riddle;
+    }
+
+    void setRiddle(const string& newRiddle) {
+        riddle = newRiddle;
+    }
+
+    string getCorrectAnswer() const {
+        return correctAnswer;
+    }
+
+    void setCorrectAnswer(const string& newAnswer) {
+        correctAnswer = newAnswer;
     }
 };
 
@@ -39,17 +56,34 @@ private:
     string correctAnswer;
 public:
     void generatePuzzle() override {
-        this->sequence = "2, 4, 8, 16, ?";
-        this->correctAnswer = "32";
-        cout << "Puzzle: " << this->sequence << endl;
+        setSequence("2, 4, 8, 16, ?");
+        setCorrectAnswer("32");
+        cout << "Puzzle: " << getSequence() << endl;
     }
 
     bool checkAnswer(const string& answer) override {
-        return answer == correctAnswer;
+        return answer == getCorrectAnswer();
     }
 
     void provideHint() override {
         cout << "Hint: It doubles each time." << endl;
+    }
+
+    // Accessors and Mutators
+    string getSequence() const {
+        return sequence;
+    }
+
+    void setSequence(const string& newSequence) {
+        sequence = newSequence;
+    }
+
+    string getCorrectAnswer() const {
+        return correctAnswer;
+    }
+
+    void setCorrectAnswer(const string& newAnswer) {
+        correctAnswer = newAnswer;
     }
 };
 
@@ -67,25 +101,25 @@ public:
     }
 
     void enterRoom() {
-        cout << "You have entered the " << roomName << "." << endl;
+        cout << "You have entered the " << getRoomName() << "." << endl;
     }
 
     void startPuzzle() {
-        if (!isSolved) {
+        if (!getIsSolved()) {
             puzzle->generatePuzzle();
         }
     }
 
     bool checkSolution(const string& answer) {
-        if (!isSolved && puzzle->checkAnswer(answer)) {
-            isSolved = true;
+        if (!getIsSolved() && puzzle->checkAnswer(answer)) {
+            setIsSolved(true);
             return true;
         }
         return false;
     }
 
     void provideHint() {
-        if (!isSolved) {
+        if (!getIsSolved()) {
             puzzle->provideHint();
         }
     }
@@ -96,6 +130,23 @@ public:
 
     static int getTotalRooms() {  // Static function to access the static variable
         return totalRooms;
+    }
+
+    // Accessors and Mutators
+    string getRoomName() const {
+        return roomName;
+    }
+
+    void setRoomName(const string& name) {
+        roomName = name;
+    }
+
+    bool getIsSolved() const {
+        return isSolved;
+    }
+
+    void setIsSolved(bool solved) {
+        isSolved = solved;
     }
 
     ~Room() {
@@ -121,7 +172,7 @@ public:
     }
 
     void trackProgress() const {
-        cout << playerName << " has made " << attempts << " attempts and used " << totalHintsUsed << " hints." << endl;
+        cout << getPlayerName() << " has made " << getAttempts() << " attempts and used " << totalHintsUsed << " hints." << endl;
     }
 
     void updateAttempts() {
@@ -133,8 +184,21 @@ public:
         totalHintsUsed++;  // Increment static hints variable
     }
 
-    string getName() const {
+    // Accessors and Mutators
+    string getPlayerName() const {
         return playerName;
+    }
+
+    void setPlayerName(const string& name) {
+        playerName = name;
+    }
+
+    int getAttempts() const {
+        return attempts;
+    }
+
+    void setAttempts(int newAttempts) {
+        attempts = newAttempts;
     }
 
     static int getTotalHintsUsed() {  // Static function to access the static variable
@@ -177,7 +241,7 @@ public:
     }
 
     void startGame() {
-        cout << "Welcome, " << player->getName() << "! The game begins now!" << endl;
+        cout << "Welcome, " << player->getPlayerName() << "! The game begins now!" << endl;
 
         for (int i = 0; i < roomCount; ++i) {
             Room* currentRoom = rooms[i];

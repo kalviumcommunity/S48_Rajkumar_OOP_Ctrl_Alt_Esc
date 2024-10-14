@@ -18,6 +18,19 @@ private:
     string correctAnswer;
 
 public:
+    // Default Constructor
+    RiddlePuzzle() : riddle(""), correctAnswer("") {}
+
+    // Parameterized Constructor
+    RiddlePuzzle(const string& r, const string& answer) : riddle(r), correctAnswer(answer) {}
+
+    // Copy Constructor
+    RiddlePuzzle(const RiddlePuzzle& other) {
+        riddle = other.riddle;
+        correctAnswer = other.correctAnswer;
+        cout << "RiddlePuzzle Copy Constructor called" << endl;
+    }
+
     // Public methods to interact with private data
     void generatePuzzle() override {
         setRiddle("I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?");
@@ -49,6 +62,11 @@ public:
     void setCorrectAnswer(const string& newAnswer) {
         correctAnswer = newAnswer;
     }
+
+    // Destructor
+    ~RiddlePuzzle() {
+        cout << "RiddlePuzzle Destructor called" << endl;
+    }
 };
 
 // Number Sequence Puzzle Class
@@ -58,6 +76,19 @@ private:
     string correctAnswer;
 
 public:
+    // Default Constructor
+    NumberSequencePuzzle() : sequence(""), correctAnswer("") {}
+
+    // Parameterized Constructor
+    NumberSequencePuzzle(const string& seq, const string& answer) : sequence(seq), correctAnswer(answer) {}
+
+    // Copy Constructor
+    NumberSequencePuzzle(const NumberSequencePuzzle& other) {
+        sequence = other.sequence;
+        correctAnswer = other.correctAnswer;
+        cout << "NumberSequencePuzzle Copy Constructor called" << endl;
+    }
+
     // Public methods to interact with private data
     void generatePuzzle() override {
         setSequence("2, 4, 8, 16, ?");
@@ -89,6 +120,11 @@ public:
     void setCorrectAnswer(const string& newAnswer) {
         correctAnswer = newAnswer;
     }
+
+    // Destructor
+    ~NumberSequencePuzzle() {
+        cout << "NumberSequencePuzzle Destructor called" << endl;
+    }
 };
 
 // Room Class
@@ -100,8 +136,20 @@ private:
     static int totalRooms;  // Static variable to track total rooms
 
 public:
+    // Default Constructor
+    Room() : roomName("Default Room"), puzzle(nullptr) {}
+
+    // Parameterized Constructor
     Room(string name, Puzzle* p) : roomName(name), puzzle(p) {
         totalRooms++;  // Increment total rooms whenever a new room is created
+    }
+
+    // Copy Constructor
+    Room(const Room& other) {
+        roomName = other.roomName;
+        puzzle = other.puzzle; // Shallow copy, assuming Puzzle is polymorphic
+        isSolved = other.isSolved;
+        cout << "Room Copy Constructor called" << endl;
     }
 
     void enterRoom() {
@@ -149,8 +197,10 @@ public:
         return totalRooms;
     }
 
+    // Destructor
     ~Room() {
         delete puzzle;
+        cout << "Room Destructor called" << endl;
     }
 };
 
@@ -167,8 +217,19 @@ private:
     static int totalAttempts;   // Static variable to track total attempts across all players
 
 public:
+    // Default Constructor
+    Player() : playerName("Unnamed Player"), attempts(0) {}
+
+    // Parameterized Constructor
     Player(string name) : playerName(name) {
         totalPlayers++;  // Increment total players whenever a new player is created
+    }
+
+    // Copy Constructor
+    Player(const Player& other) {
+        playerName = other.playerName;
+        attempts = other.attempts;
+        cout << "Player Copy Constructor called" << endl;
     }
 
     // Accessor and Mutator methods for private members
@@ -212,6 +273,11 @@ public:
     static int getTotalAttempts() {  // Static function to access total attempts
         return totalAttempts;
     }
+
+    // Destructor
+    ~Player() {
+        cout << "Player Destructor called" << endl;
+    }
 };
 
 // Initialize static variables
@@ -228,8 +294,18 @@ private:
     int maxRooms;
 
 public:
+    // Parameterized Constructor
     GameEngine(Player* p, int maxRooms) : player(p), maxRooms(maxRooms) {
         rooms = new Room*[maxRooms];
+    }
+
+    // Destructor
+    ~GameEngine() {
+        for (int i = 0; i < roomCount; ++i) {
+            delete rooms[i];  
+        }
+        delete[] rooms;
+        cout << "GameEngine Destructor called" << endl;
     }
 
     void addRoom(Room* room) {
@@ -272,17 +348,10 @@ public:
         }
 
         cout << "Game over! Thanks for playing!" << endl;
-        cout << "Total rooms created: " << Room::getTotalRooms() << endl;  // Access static function
-        cout << "Total players: " << Player::getTotalPlayers() << endl;  // Access static function
-        cout << "Total attempts: " << Player::getTotalAttempts() << endl;  // Access static function
-        cout << "Total hints used: " << Player::getTotalHintsUsed() << endl;  // Access static function
-    }
-
-    ~GameEngine() {
-        for (int i = 0; i < roomCount; ++i) {
-            delete rooms[i];  
-        }
-        delete[] rooms;  
+        cout << "Total rooms created: " << Room::getTotalRooms() << endl;
+        cout << "Total players: " << Player::getTotalPlayers() << endl;
+        cout << "Total attempts: " << Player::getTotalAttempts() << endl;
+        cout << "Total hints used: " << Player::getTotalHintsUsed() << endl;
     }
 };
 
@@ -302,7 +371,7 @@ int main() {
     game->startGame();
 
     delete game;  
-    delete player; 
+    delete player;
 
     return 0;
 }

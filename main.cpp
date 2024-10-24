@@ -11,27 +11,17 @@ public:
     virtual ~Puzzle() {}
 };
 
-// Riddle Puzzle Class
+// Riddle Puzzle Class - Inherits from Puzzle
 class RiddlePuzzle : public Puzzle {
 private:
     string riddle;
     string correctAnswer;
 
 public:
-    // Default Constructor
     RiddlePuzzle() : riddle(""), correctAnswer("") {}
 
-    // Parameterized Constructor
     RiddlePuzzle(const string& r, const string& answer) : riddle(r), correctAnswer(answer) {}
 
-    // Copy Constructor
-    RiddlePuzzle(const RiddlePuzzle& other) {
-        riddle = other.riddle;
-        correctAnswer = other.correctAnswer;
-        cout << "RiddlePuzzle Copy Constructor called" << endl;
-    }
-
-    // Public methods to interact with private data
     void generatePuzzle() override {
         setRiddle("I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?");
         setCorrectAnswer("Echo");
@@ -46,7 +36,6 @@ public:
         cout << "Hint: It repeats what you say." << endl;
     }
 
-    // Accessors and Mutators
     string getRiddle() const {
         return riddle;
     }
@@ -63,33 +52,19 @@ public:
         correctAnswer = newAnswer;
     }
 
-    // Destructor
-    ~RiddlePuzzle() {
-        cout << "RiddlePuzzle Destructor called" << endl;
-    }
+    ~RiddlePuzzle() {}
 };
 
-// Number Sequence Puzzle Class
 class NumberSequencePuzzle : public Puzzle {
 private:
     string sequence;
     string correctAnswer;
 
 public:
-    // Default Constructor
     NumberSequencePuzzle() : sequence(""), correctAnswer("") {}
 
-    // Parameterized Constructor
     NumberSequencePuzzle(const string& seq, const string& answer) : sequence(seq), correctAnswer(answer) {}
 
-    // Copy Constructor
-    NumberSequencePuzzle(const NumberSequencePuzzle& other) {
-        sequence = other.sequence;
-        correctAnswer = other.correctAnswer;
-        cout << "NumberSequencePuzzle Copy Constructor called" << endl;
-    }
-
-    // Public methods to interact with private data
     void generatePuzzle() override {
         setSequence("2, 4, 8, 16, ?");
         setCorrectAnswer("32");
@@ -104,7 +79,6 @@ public:
         cout << "Hint: It doubles each time." << endl;
     }
 
-    // Accessors and Mutators
     string getSequence() const {
         return sequence;
     }
@@ -121,36 +95,62 @@ public:
         correctAnswer = newAnswer;
     }
 
-    // Destructor
-    ~NumberSequencePuzzle() {
-        cout << "NumberSequencePuzzle Destructor called" << endl;
-    }
+    ~NumberSequencePuzzle() {}
 };
 
-// Room Class
+class MathPuzzle : public Puzzle {
+private:
+    string problem;
+    string correctAnswer;
+
+public:
+    MathPuzzle() : problem(""), correctAnswer("") {}
+
+    MathPuzzle(const string& p, const string& answer) : problem(p), correctAnswer(answer) {}
+
+    void generatePuzzle() override {
+        setProblem("What is 12 + 8?");
+        setCorrectAnswer("20");
+        cout << "Puzzle: " << getProblem() << endl;
+    }
+
+    bool checkAnswer(const string& answer) override {
+        return answer == getCorrectAnswer();
+    }
+
+    void provideHint() override {
+        cout << "Hint: It's a simple addition." << endl;
+    }
+
+    string getProblem() const {
+        return problem;
+    }
+
+    void setProblem(const string& newProblem) {
+        problem = newProblem;
+    }
+
+    string getCorrectAnswer() const {
+        return correctAnswer;
+    }
+
+    void setCorrectAnswer(const string& newAnswer) {
+        correctAnswer = newAnswer;
+    }
+
+    ~MathPuzzle() {}
+};
+
 class Room {
 private:
     string roomName;
     Puzzle* puzzle;
-    bool isSolved = false; // Private to control room's solved state
-    static int totalRooms;  // Static variable to track total rooms
+    bool isSolved = false;
 
 public:
-    // Default Constructor
     Room() : roomName("Default Room"), puzzle(nullptr) {}
 
-    // Parameterized Constructor
-    Room(string name, Puzzle* p) : roomName(name), puzzle(p) {
-        totalRooms++;  // Increment total rooms whenever a new room is created
-    }
-
-    // Copy Constructor
-    Room(const Room& other) {
-        roomName = other.roomName;
-        puzzle = other.puzzle; // Shallow copy, assuming Puzzle is polymorphic
-        isSolved = other.isSolved;
-        cout << "Room Copy Constructor called" << endl;
-    }
+    Room(string name, Puzzle* p) : roomName(name), puzzle(p) {}
 
     void enterRoom() {
         cout << "You have entered the " << getRoomName() << "." << endl;
@@ -176,7 +176,6 @@ public:
         }
     }
 
-    // Accessor and Mutator methods for private members
     string getRoomName() const {
         return roomName;
     }
@@ -193,46 +192,21 @@ public:
         isSolved = solved;
     }
 
-    static int getTotalRooms() {  // Static function to access the static variable
-        return totalRooms;
-    }
-
-    // Destructor
     ~Room() {
         delete puzzle;
-        cout << "Room Destructor called" << endl;
     }
 };
 
-// Initialize static variable
-int Room::totalRooms = 0;
-
-// Player Class
 class Player {
 private:
     string playerName;
     int attempts = 0;
-    static int totalHintsUsed;  // Static variable to track hints used across all players
-    static int totalPlayers;    // Static variable to track total number of players
-    static int totalAttempts;   // Static variable to track total attempts across all players
 
 public:
-    // Default Constructor
     Player() : playerName("Unnamed Player"), attempts(0) {}
 
-    // Parameterized Constructor
-    Player(string name) : playerName(name) {
-        totalPlayers++;  // Increment total players whenever a new player is created
-    }
+    Player(string name) : playerName(name) {}
 
-    // Copy Constructor
-    Player(const Player& other) {
-        playerName = other.playerName;
-        attempts = other.attempts;
-        cout << "Player Copy Constructor called" << endl;
-    }
-
-    // Accessor and Mutator methods for private members
     string getPlayerName() const {
         return playerName;
     }
@@ -245,67 +219,32 @@ public:
         return attempts;
     }
 
-    void setAttempts(int newAttempts) {
-        attempts = newAttempts;
-    }
-
     void updateAttempts() {
         attempts++;
-        totalAttempts++;  // Increment total attempts
     }
 
-    void useHint() {
-        totalHintsUsed++;  // Increment static hints variable
-    }
-
-    void trackProgress() const {
-        cout << getPlayerName() << " has made " << getAttempts() << " attempts and used " << totalHintsUsed << " hints." << endl;
-    }
-
-    static int getTotalHintsUsed() {  // Static function to access the static variable
-        return totalHintsUsed;
-    }
-
-    static int getTotalPlayers() {  // Static function to access total players
-        return totalPlayers;
-    }
-
-    static int getTotalAttempts() {  // Static function to access total attempts
-        return totalAttempts;
-    }
-
-    // Destructor
-    ~Player() {
-        cout << "Player Destructor called" << endl;
-    }
+    ~Player() {}
 };
 
-// Initialize static variables
-int Player::totalHintsUsed = 0;
-int Player::totalPlayers = 0;
-int Player::totalAttempts = 0;
-
-// Game Engine Class
 class GameEngine {
 private:
     Player* player;
-    Room** rooms; 
+    Room** rooms;
     int roomCount = 0;
     int maxRooms;
+    int totalHintsTaken = 0;     // Track total hints taken
+    int totalCorrectAnswers = 0; // Track total correct answers
 
 public:
-    // Parameterized Constructor
     GameEngine(Player* p, int maxRooms) : player(p), maxRooms(maxRooms) {
         rooms = new Room*[maxRooms];
     }
 
-    // Destructor
     ~GameEngine() {
         for (int i = 0; i < roomCount; ++i) {
-            delete rooms[i];  
+            delete rooms[i];
         }
         delete[] rooms;
-        cout << "GameEngine Destructor called" << endl;
     }
 
     void addRoom(Room* room) {
@@ -333,29 +272,25 @@ public:
 
             if (currentRoom->checkSolution(playerAnswer)) {
                 cout << "Correct! You have solved the puzzle!" << endl;
-                continue; 
+                totalCorrectAnswers++; // Increase correct answer count
+                continue;
             } else {
                 cout << "Incorrect! Do you need a hint? (y/n): ";
                 string needHint;
                 getline(cin, needHint);
                 if (needHint == "y" || needHint == "Y") {
                     currentRoom->provideHint();
-                    player->useHint();
+                    totalHintsTaken++; // Increase hints taken count
                 }
             }
-
-            player->trackProgress();
         }
 
         cout << "Game over! Thanks for playing!" << endl;
-        cout << "Total rooms created: " << Room::getTotalRooms() << endl;
-        cout << "Total players: " << Player::getTotalPlayers() << endl;
-        cout << "Total attempts: " << Player::getTotalAttempts() << endl;
-        cout << "Total hints used: " << Player::getTotalHintsUsed() << endl;
+        cout << "Total hints taken: " << totalHintsTaken << endl;
+        cout << "Total correct answers: " << totalCorrectAnswers << endl;
     }
 };
 
-// Main Function
 int main() {
     string playerName;
     cout << "Enter player name: ";
@@ -367,10 +302,11 @@ int main() {
 
     game->addRoom(new Room("Mystery Room", new RiddlePuzzle()));
     game->addRoom(new Room("Logic Room", new NumberSequencePuzzle()));
+    game->addRoom(new Room("Math Room", new MathPuzzle()));
 
     game->startGame();
 
-    delete game;  
+    delete game;
     delete player;
 
     return 0;

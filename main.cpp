@@ -2,13 +2,14 @@
 #include <string>
 using namespace std;
 
-// Base Puzzle Class
+// Abstract base class (Puzzle) with pure virtual functions
 class Puzzle {
 public:
+    // Pure virtual functions
     virtual void generatePuzzle() = 0;
     virtual bool checkAnswer(const string& answer) = 0;
     virtual void provideHint() = 0;
-    virtual ~Puzzle() {}
+    virtual ~Puzzle() {}  // Virtual destructor for proper cleanup
 };
 
 // RiddlePuzzle Class - Inherits from Puzzle

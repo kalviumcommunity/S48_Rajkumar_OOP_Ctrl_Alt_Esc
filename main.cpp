@@ -11,15 +11,17 @@ public:
     virtual ~Puzzle() {}
 };
 
-// Riddle Puzzle Class - Inherits from Puzzle
+// RiddlePuzzle Class - Inherits from Puzzle
 class RiddlePuzzle : public Puzzle {
 private:
     string riddle;
     string correctAnswer;
 
 public:
+    // Default constructor
     RiddlePuzzle() : riddle(""), correctAnswer("") {}
 
+    // Overloaded constructor
     RiddlePuzzle(const string& r, const string& answer) : riddle(r), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -55,14 +57,17 @@ public:
     ~RiddlePuzzle() {}
 };
 
+// NumberSequencePuzzle Class - Inherits from Puzzle
 class NumberSequencePuzzle : public Puzzle {
 private:
     string sequence;
     string correctAnswer;
 
 public:
+    // Default constructor
     NumberSequencePuzzle() : sequence(""), correctAnswer("") {}
 
+    // Overloaded constructor
     NumberSequencePuzzle(const string& seq, const string& answer) : sequence(seq), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -98,14 +103,17 @@ public:
     ~NumberSequencePuzzle() {}
 };
 
+// MathPuzzle Class - Inherits from Puzzle
 class MathPuzzle : public Puzzle {
 private:
     string problem;
     string correctAnswer;
 
 public:
+    // Default constructor
     MathPuzzle() : problem(""), correctAnswer("") {}
 
+    // Overloaded constructor
     MathPuzzle(const string& p, const string& answer) : problem(p), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -141,6 +149,7 @@ public:
     ~MathPuzzle() {}
 };
 
+// Room Class
 class Room {
 private:
     string roomName;
@@ -148,8 +157,10 @@ private:
     bool isSolved = false;
 
 public:
+    // Default constructor
     Room() : roomName("Default Room"), puzzle(nullptr) {}
 
+    // Overloaded constructor
     Room(string name, Puzzle* p) : roomName(name), puzzle(p) {}
 
     void enterRoom() {
@@ -197,14 +208,17 @@ public:
     }
 };
 
+// Player Class
 class Player {
 private:
     string playerName;
     int attempts = 0;
 
 public:
+    // Default constructor
     Player() : playerName("Unnamed Player"), attempts(0) {}
 
+    // Overloaded constructor
     Player(string name) : playerName(name) {}
 
     string getPlayerName() const {
@@ -226,6 +240,7 @@ public:
     ~Player() {}
 };
 
+// GameEngine Class
 class GameEngine {
 private:
     Player* player;

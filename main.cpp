@@ -5,7 +5,6 @@ using namespace std;
 // Abstract base class (Puzzle) with pure virtual functions
 class Puzzle {
 public:
-    // Pure virtual functions
     virtual void generatePuzzle() = 0;
     virtual bool checkAnswer(const string& answer) = 0;
     virtual void provideHint() = 0;
@@ -19,10 +18,7 @@ private:
     string correctAnswer;
 
 public:
-    // Default constructor
     RiddlePuzzle() : riddle(""), correctAnswer("") {}
-
-    // Overloaded constructor
     RiddlePuzzle(const string& r, const string& answer) : riddle(r), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -39,21 +35,10 @@ public:
         cout << "Hint: It repeats what you say." << endl;
     }
 
-    string getRiddle() const {
-        return riddle;
-    }
-
-    void setRiddle(const string& newRiddle) {
-        riddle = newRiddle;
-    }
-
-    string getCorrectAnswer() const {
-        return correctAnswer;
-    }
-
-    void setCorrectAnswer(const string& newAnswer) {
-        correctAnswer = newAnswer;
-    }
+    string getRiddle() const { return riddle; }
+    void setRiddle(const string& newRiddle) { riddle = newRiddle; }
+    string getCorrectAnswer() const { return correctAnswer; }
+    void setCorrectAnswer(const string& newAnswer) { correctAnswer = newAnswer; }
 
     ~RiddlePuzzle() {}
 };
@@ -65,10 +50,7 @@ private:
     string correctAnswer;
 
 public:
-    // Default constructor
     NumberSequencePuzzle() : sequence(""), correctAnswer("") {}
-
-    // Overloaded constructor
     NumberSequencePuzzle(const string& seq, const string& answer) : sequence(seq), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -85,21 +67,10 @@ public:
         cout << "Hint: It doubles each time." << endl;
     }
 
-    string getSequence() const {
-        return sequence;
-    }
-
-    void setSequence(const string& newSequence) {
-        sequence = newSequence;
-    }
-
-    string getCorrectAnswer() const {
-        return correctAnswer;
-    }
-
-    void setCorrectAnswer(const string& newAnswer) {
-        correctAnswer = newAnswer;
-    }
+    string getSequence() const { return sequence; }
+    void setSequence(const string& newSequence) { sequence = newSequence; }
+    string getCorrectAnswer() const { return correctAnswer; }
+    void setCorrectAnswer(const string& newAnswer) { correctAnswer = newAnswer; }
 
     ~NumberSequencePuzzle() {}
 };
@@ -111,10 +82,7 @@ private:
     string correctAnswer;
 
 public:
-    // Default constructor
     MathPuzzle() : problem(""), correctAnswer("") {}
-
-    // Overloaded constructor
     MathPuzzle(const string& p, const string& answer) : problem(p), correctAnswer(answer) {}
 
     void generatePuzzle() override {
@@ -131,21 +99,10 @@ public:
         cout << "Hint: It's a simple addition." << endl;
     }
 
-    string getProblem() const {
-        return problem;
-    }
-
-    void setProblem(const string& newProblem) {
-        problem = newProblem;
-    }
-
-    string getCorrectAnswer() const {
-        return correctAnswer;
-    }
-
-    void setCorrectAnswer(const string& newAnswer) {
-        correctAnswer = newAnswer;
-    }
+    string getProblem() const { return problem; }
+    void setProblem(const string& newProblem) { problem = newProblem; }
+    string getCorrectAnswer() const { return correctAnswer; }
+    void setCorrectAnswer(const string& newAnswer) { correctAnswer = newAnswer; }
 
     ~MathPuzzle() {}
 };
@@ -158,16 +115,10 @@ private:
     bool isSolved = false;
 
 public:
-    // Default constructor
     Room() : roomName("Default Room"), puzzle(nullptr) {}
-
-    // Overloaded constructor
     Room(string name, Puzzle* p) : roomName(name), puzzle(p) {}
 
-    void enterRoom() {
-        cout << "You have entered the " << getRoomName() << "." << endl;
-    }
-
+    void enterRoom() { cout << "You have entered the " << getRoomName() << "." << endl; }
     void startPuzzle() {
         if (!getIsSolved()) {
             puzzle->generatePuzzle();
@@ -188,25 +139,12 @@ public:
         }
     }
 
-    string getRoomName() const {
-        return roomName;
-    }
+    string getRoomName() const { return roomName; }
+    void setRoomName(const string& name) { roomName = name; }
+    bool getIsSolved() const { return isSolved; }
+    void setIsSolved(bool solved) { isSolved = solved; }
 
-    void setRoomName(const string& name) {
-        roomName = name;
-    }
-
-    bool getIsSolved() const {
-        return isSolved;
-    }
-
-    void setIsSolved(bool solved) {
-        isSolved = solved;
-    }
-
-    ~Room() {
-        delete puzzle;
-    }
+    ~Room() { delete puzzle; }
 };
 
 // Player Class
@@ -216,27 +154,13 @@ private:
     int attempts = 0;
 
 public:
-    // Default constructor
     Player() : playerName("Unnamed Player"), attempts(0) {}
-
-    // Overloaded constructor
     Player(string name) : playerName(name) {}
 
-    string getPlayerName() const {
-        return playerName;
-    }
-
-    void setPlayerName(const string& name) {
-        playerName = name;
-    }
-
-    int getAttempts() const {
-        return attempts;
-    }
-
-    void updateAttempts() {
-        attempts++;
-    }
+    string getPlayerName() const { return playerName; }
+    void setPlayerName(const string& name) { playerName = name; }
+    int getAttempts() const { return attempts; }
+    void updateAttempts() { attempts++; }
 
     ~Player() {}
 };
@@ -248,8 +172,8 @@ private:
     Room** rooms;
     int roomCount = 0;
     int maxRooms;
-    int totalHintsTaken = 0;     // Track total hints taken
-    int totalCorrectAnswers = 0; // Track total correct answers
+    int totalHintsTaken = 0;
+    int totalCorrectAnswers = 0;
 
 public:
     GameEngine(Player* p, int maxRooms) : player(p), maxRooms(maxRooms) {
@@ -288,7 +212,7 @@ public:
 
             if (currentRoom->checkSolution(playerAnswer)) {
                 cout << "Correct! You have solved the puzzle!" << endl;
-                totalCorrectAnswers++; // Increase correct answer count
+                totalCorrectAnswers++;
                 continue;
             } else {
                 cout << "Incorrect! Do you need a hint? (y/n): ";
@@ -296,7 +220,7 @@ public:
                 getline(cin, needHint);
                 if (needHint == "y" || needHint == "Y") {
                     currentRoom->provideHint();
-                    totalHintsTaken++; // Increase hints taken count
+                    totalHintsTaken++;
                 }
             }
         }
@@ -307,6 +231,7 @@ public:
     }
 };
 
+// Main Function
 int main() {
     string playerName;
     cout << "Enter player name: ";

@@ -111,7 +111,7 @@ public:
 class Room {
 private:
     string roomName;
-    Puzzle* puzzle;
+    Puzzle* puzzle;  // Dependency injected via constructor
     bool isSolved = false;
 
 public:
@@ -120,13 +120,13 @@ public:
 
     void enterRoom() { cout << "You have entered the " << getRoomName() << "." << endl; }
     void startPuzzle() {
-        if (!getIsSolved()) {
+        if (!getIsSolved() && puzzle) {
             puzzle->generatePuzzle();
         }
     }
 
     bool checkSolution(const string& answer) {
-        if (!getIsSolved() && puzzle->checkAnswer(answer)) {
+        if (!getIsSolved() && puzzle && puzzle->checkAnswer(answer)) {
             setIsSolved(true);
             return true;
         }
@@ -134,7 +134,7 @@ public:
     }
 
     void provideHint() {
-        if (!getIsSolved()) {
+        if (!getIsSolved() && puzzle) {
             puzzle->provideHint();
         }
     }
@@ -144,7 +144,7 @@ public:
     bool getIsSolved() const { return isSolved; }
     void setIsSolved(bool solved) { isSolved = solved; }
 
-    ~Room() { delete puzzle; }
+    ~Room() { delete puzzle; }  // Assume ownership of the puzzle object
 };
 
 // Player Class
@@ -241,6 +241,7 @@ int main() {
 
     GameEngine* game = new GameEngine(player, 10);
 
+    // Dependency Injection: Passing puzzles to rooms
     game->addRoom(new Room("Mystery Room", new RiddlePuzzle()));
     game->addRoom(new Room("Logic Room", new NumberSequencePuzzle()));
     game->addRoom(new Room("Math Room", new MathPuzzle()));
